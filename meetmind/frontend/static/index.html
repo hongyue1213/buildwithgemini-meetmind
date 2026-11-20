@@ -19,7 +19,11 @@
   .msg.user .bubble { background:var(--accent); color:#fff; border:none; }
   /* When the reply is an A2UI card, drop the bubble chrome so the card stands alone. */
   .bubble.rich { background:transparent; border:none; padding:0; max-width:100%; white-space:normal; }
-  form { display:flex; gap:.5rem; padding:1rem; border-top:1px solid var(--border); background:#fff; }
+  .bottom-bar { background:#fff; border-top:1px solid var(--border); display:flex; flex-direction:column; }
+  #suggestions { display:flex; gap:.5rem; padding:.6rem 1.2rem 0; max-width:780px; width:100%; margin:0 auto; overflow-x:auto; }
+  .chip { background:#f8fafc; border:1px solid var(--border); border-radius:18px; padding:.35rem .75rem; font-size:.85rem; color:#475569; cursor:pointer; transition:all .15s ease; font-weight:500; white-space:nowrap; }
+  .chip:hover { border-color:var(--accent); color:var(--accent); background:#eef2ff; }
+  form { display:flex; gap:.5rem; padding:.6rem 1.2rem 1rem; max-width:780px; width:100%; margin:0 auto; }
   input { flex:1; padding:.7rem; border:1px solid var(--border); border-radius:8px; font-size:1rem; }
   button { padding:.7rem 1.1rem; border:none; border-radius:8px; background:var(--accent); color:#fff; font-weight:600; cursor:pointer; }
 
@@ -43,15 +47,32 @@
 <body>
 <header>🧠 MeetMind</header>
 <div id="log"></div>
-<form id="form">
-  <input id="input" placeholder="Ask MeetMind about meetings, action items, or mind maps…" autocomplete="off" autofocus>
-  <button>Send</button>
-</form>
+<div class="bottom-bar">
+  <div id="suggestions">
+    <button type="button" class="chip" onclick="usePrompt('Show me our recent meetings and what action items are pending for Bob.')">📋 Recent Meetings & Tasks</button>
+    <button type="button" class="chip" onclick="usePrompt('Generate a visual mind map summary for the Q4 AI Feature Roadmap meeting.')">🗺️ Q4 Roadmap Mind Map</button>
+    <button type="button" class="chip" onclick="usePrompt('Generate a short video highlight celebrating our Q3 sprint milestone.')">🎬 Q3 Milestone Video</button>
+  </div>
+  <form id="form">
+    <input id="input" placeholder="Ask MeetMind about meetings, action items, or mind maps…" autocomplete="off" autofocus>
+    <button>Send</button>
+  </form>
+</div>
 
 <script>
 const log = document.getElementById("log");
 const form = document.getElementById("form");
 const input = document.getElementById("input");
+
+function usePrompt(text) {
+  input.value = text;
+  input.focus();
+  if (typeof form.requestSubmit === "function") {
+    form.requestSubmit();
+  } else {
+    form.dispatchEvent(new Event("submit", { cancelable: true }));
+  }
+}
 
 function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
 
